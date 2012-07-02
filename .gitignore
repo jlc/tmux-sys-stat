@@ -1,0 +1,4 @@
+*.swp
+*.swo
+*.o
+tmux-sys-stat
