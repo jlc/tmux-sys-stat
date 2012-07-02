@@ -47,5 +47,7 @@ Add in .tmux.conf:
     set -g status-right "#[fg=black,bg=yellow]#(tmux-sys-stat)#[default] - #h %H:%M %d-%b-%y"
     set -g status-right-length 130
 
+## Output example
 
+    80.27% [#### ]73% [#    ]05% [##   ]36% [#    ]04% [###  ]44% [#    ]04% [#    ]20% [#    ]02%  - buddy 16:32 02-Jul-12
 
