@@ -47,7 +47,7 @@ string cpuAsciiStatus(const double system, const double user, const double idle)
 
   *cur++ = '[';
   i = 0;
-  while (i < nbBar)        { *cur++ = '|'; i++; }
+  while (i < nbBar)        { *cur++ = '#'; i++; }
   i = 0;
   while (i < nbEmptyBar)   { *cur++ = ' '; i++; }
   *cur++ = ']';
