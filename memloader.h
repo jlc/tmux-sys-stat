@@ -25,16 +25,14 @@
 
 #include <inttypes.h>
 
-class MemLoader {
+#include "base.h"
+
+class MemLoader : public Loader {
 public:
   MemLoader();
   virtual ~MemLoader();
 
-  virtual bool init() = 0;
-
-  virtual void fini() = 0;
-
-  virtual void update() = 0;
+  virtual void accept(Visitor*);
 
   inline double totalMB() { return total_; }
   inline double activeMB() { return active_; }

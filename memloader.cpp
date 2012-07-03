@@ -29,3 +29,7 @@ MemLoader::MemLoader() :
 
 MemLoader::~MemLoader() {
 }
+
+void MemLoader::accept(Visitor* v) {
+  v->visit(this);
+}

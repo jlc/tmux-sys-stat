@@ -1,7 +1,7 @@
 /*
- * cpuloader.cpp
+ * base.h
  *
- * Base class for cpu stats gathering.
+ * Base classes.
  *
  * Copyright (C) 2012 Jeanluc Chasseriau <jeanluc.chasseriau@crossing-tech.com>
  *
@@ -20,17 +20,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "cpuloader.h"
+#ifndef __BASE_H__
+#define __BASE_H__
 
-#include <stdio.h>
+class CpuLoader;
+class MemLoader;
 
-CpuLoader::CpuLoader() :
-  prevCpuLoad_(NULL), clockSpeed_(0), cpuCount_(0), cpuStat_(NULL) {
-  loadAverage_[0] = loadAverage_[1] = loadAverage_[2] = 0; 
-}
+class Visitor {
+public:
+  virtual void visit(CpuLoader*) = 0;
+  virtual void visit(MemLoader*) = 0;
+};
 
-CpuLoader::~CpuLoader() {}
+class Visitable {
+public:
+  virtual void accept(Visitor*) = 0;
+};
 
-void CpuLoader::accept(Visitor* v) {
-  v->visit(this);
-}
+class Loader : public Visitable {
+public:
+  virtual bool init() = 0;
+
+  virtual void fini() = 0;
+
+  virtual void update() = 0;
+};
+
+#endif // __BASE_H__

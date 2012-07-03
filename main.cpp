@@ -25,74 +25,116 @@
 #include <math.h>
 #include <string>
 
-#include "cpuloader.h"
 #include "cpuloader_osx.h"
 #include "memloader_osx.h"
+#include "base.h"
 #include "constants.h"
 
 using namespace std;
 
-string cpuAsciiStatus(const double system, const double user, const double idle) {
-  const int NB_BAR_MAX = 5;
-  const double PERCENT_PER_BAR = 100.0 / NB_BAR_MAX;
+static int NB_BAR_MAX = 5;
+static double PERCENT_PER_BAR = 100.0 / NB_BAR_MAX;
 
-  double percentUsed = (system + user) * 100.0;
+class StatusVisitor : public Visitor {
+private:
+  string cpuStatus_;
+  string memStatus_;
 
-  double nbBar = ceil(percentUsed / PERCENT_PER_BAR);
-  double nbEmptyBar = NB_BAR_MAX - (int)nbBar;
+  char tmpOutput[256];
 
-  char output[256];
-  char *cur = output;
-  int i = 0;
+public:
+  StatusVisitor() {
+    cpuStatus_ = "";
+    memStatus_ = "";
+  }
 
-  *cur++ = '[';
-  i = 0;
-  while (i < nbBar)        { *cur++ = '#'; i++; }
-  i = 0;
-  while (i < nbEmptyBar)   { *cur++ = ' '; i++; }
-  *cur++ = ']';
-  sprintf(cur, "%02.0F%%", percentUsed);
+  ~StatusVisitor() {
+  }
 
-  string sOutput = output;
-  return sOutput;
-}
+  void printStatus() {
+    printf("%s %s\n", memStatus_.c_str(), cpuStatus_.c_str());
+  }
+
+  virtual void visit(CpuLoader* cpu) {
+    double percentUsed = 0.0;
+    double nbBar = 0.0;
+    double nbEmptyBar = 0.0;
+
+    char *cur = NULL;
+
+    int i = cpu->cpuCount();
+    int j = 0;
+
+    const char *formatPercent         = "%02.0F%%";
+    const char *formatPercentSpace    = "%02.0F%% ";
+
+    while (--i) {
+      percentUsed = (cpu->statSystem(i) + cpu->statUser(i)) * 100.0;
+      nbBar = ceil(percentUsed / PERCENT_PER_BAR);
+      nbEmptyBar = NB_BAR_MAX - (int)nbBar;
+
+      cur = tmpOutput;
+      j = 0;
+
+      *cur++ = '[';
+      j = nbBar;
+      while (j--)   { *cur++ = '#'; }
+      j = nbEmptyBar;
+      while (j--)   { *cur++ = ' '; }
+      *cur++ = ']';
+
+      sprintf(cur, (i) ? formatPercentSpace : formatPercent, percentUsed);
+
+      cpuStatus_ += tmpOutput;
+    }
+  }
+
+  virtual void visit(MemLoader* mem) {
+    double percentMemUsed = (100.0 * (mem->totalMB()-mem->freeMB())) / mem->totalMB();
+    sprintf(tmpOutput, "%0.2F%% Mem", percentMemUsed);
+    memStatus_ += tmpOutput;
+  }
+
+};
+
+
 
 int main(int argc, char** argv) {
+
+//#ifdef __MACOSX__
   CpuLoaderOSX cpu;
   MemLoaderOSX mem;
+//#endif // __MACOSX__
 
-  if (!cpu.init()) {
-    return -1;
-  }
-  if (!mem.init()) {
-    return -1;
+  Loader** cmp = NULL;
+  Loader* components[] = {&cpu, &mem, NULL};
+
+  StatusVisitor status;
+
+  cmp = components;
+  while(*cmp) { 
+    if(!(*cmp)->init())
+      return -1;
+
+    (*cmp)->update();
+
+    cmp++;
   }
 
-  cpu.update();
-  mem.update();
- 
   usleep(1*SECONDS);
 
-  cpu.update();
-  mem.update();
+  cmp = components;
+  while(*cmp) { 
+    (*cmp)->update();
 
-  string output = "";
-  char tmp[1024];
+    (*cmp)->accept(&status);
 
-  // memory
-  double percentMemUsed = (100.0 * (mem.totalMB()-mem.freeMB())) / mem.totalMB();
-  sprintf(tmp, "%0.2F%%", percentMemUsed);
-  output += string(tmp) + " ";
+    (*cmp)->fini();
 
-  // cpus
-  for (int i = 0; i < cpu.cpuCount(); i++) {
-    output += cpuAsciiStatus(cpu.cpuStatSystem(i), cpu.cpuStatUser(i), cpu.cpuStatIdle(i)) + string(" ");
+    cmp++;
   }
 
-  printf("%s\n", output.c_str());
-
-  mem.fini();
-  cpu.fini();
+  status.printStatus();
 
   return 0;
 }

@@ -25,7 +25,9 @@
 
 #include <inttypes.h>
 
-class CpuLoader {
+#include "base.h"
+
+class CpuLoader : public Loader {
 public:
 
   class CpuStat {
@@ -50,14 +52,9 @@ protected:
 public:
 
   CpuLoader();
-
   virtual ~CpuLoader();
 
-  virtual bool init() = 0;
-
-  virtual void fini() = 0;
-
-  virtual void update() = 0;
+  virtual void accept(Visitor* v);
 
   inline double clockSpeed() { return clockSpeed_; }
   inline uint32_t cpuCount() { return cpuCount_; }
@@ -66,17 +63,17 @@ public:
   inline double loadAverage5() { return loadAverage_[1]; }
   inline double loadAverage15() { return loadAverage_[2]; }
 
-  inline double cpuStatSystem(int cpu) {
+  inline double statSystem(int cpu) {
     if (cpu >= cpuCount_) return 0.0;
     return cpuStat_[cpu].system;
   }
 
-  inline double cpuStatUser(int cpu) {
+  inline double statUser(int cpu) {
     if (cpu >= cpuCount_) return 0.0;
     return cpuStat_[cpu].user;
   }
 
-  inline double cpuStatIdle(int cpu) {
+  inline double statIdle(int cpu) {
     if (cpu >= cpuCount_) return 0.0;
     return cpuStat_[cpu].idle;
   }
