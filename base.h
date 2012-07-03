@@ -25,11 +25,13 @@
 
 class CpuLoader;
 class MemLoader;
+class LoadAverageLoader;
 
 class Visitor {
 public:
   virtual void visit(CpuLoader*) = 0;
   virtual void visit(MemLoader*) = 0;
+  virtual void visit(LoadAverageLoader*) = 0;
 };
 
 class Visitable {

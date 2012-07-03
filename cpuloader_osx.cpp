@@ -79,8 +79,6 @@ void CpuLoaderOSX::fini() {
 }
 
 void CpuLoaderOSX::update() {
-  if (!readLoadAverage())
-    printf("Error: unable to read load average.\n");
   if (!readCpuTicks())
     printf("Error: unable to read cpu ticks.\n");
 }
@@ -207,13 +205,6 @@ bool CpuLoaderOSX::readCpuTicks() {
   }
 
   vm_deallocate(mach_task_self(), (vm_address_t)cpuLoad, (vm_size_t)(processorCount * sizeof(*cpuLoad)));
-  return true;
-}
-
-bool CpuLoaderOSX::readLoadAverage() {
-  if (getloadavg(loadAverage_, 3) != 3) {
-    return false;
-  }
   return true;
 }
 

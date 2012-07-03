@@ -45,8 +45,6 @@ protected:
 
   uint32_t cpuCount_;
 
-  double loadAverage_[3];
-
   CpuStat* cpuStat_;
 
 public:
@@ -58,10 +56,6 @@ public:
 
   inline double clockSpeed() { return clockSpeed_; }
   inline uint32_t cpuCount() { return cpuCount_; }
-
-  inline double loadAverage1() { return loadAverage_[0]; }
-  inline double loadAverage5() { return loadAverage_[1]; }
-  inline double loadAverage15() { return loadAverage_[2]; }
 
   inline double statSystem(int cpu) {
     if (cpu >= cpuCount_) return 0.0;

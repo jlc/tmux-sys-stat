@@ -26,7 +26,6 @@
 
 CpuLoader::CpuLoader() :
   prevCpuLoad_(NULL), clockSpeed_(0), cpuCount_(0), cpuStat_(NULL) {
-  loadAverage_[0] = loadAverage_[1] = loadAverage_[2] = 0; 
 }
 
 CpuLoader::~CpuLoader() {}

@@ -1,7 +1,7 @@
 /*
- * cpuloader_osx.h
+ * loadaverageloader.h
  *
- * MacOSX Cpu stat gathering.
+ * Base class for load average stats gathering.
  *
  * Copyright (C) 2012 Jeanluc Chasseriau <jeanluc.chasseriau@crossing-tech.com>
  *
@@ -20,35 +20,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __CPULOADER_OSX__
-#define __CPULOADER_OSX__
+#ifndef __LOADAVERAGELOADER_H__
+#define __LOADAVERAGELOADER_H__
 
-#include "cpuloader.h"
+#include <inttypes.h>
 
-#include <mach/mach_types.h>
+#include "base.h"
 
-class CpuLoaderOSX : public CpuLoader {
+class LoadAverageLoader : public Loader {
 public:
-  CpuLoaderOSX();
-  virtual ~CpuLoaderOSX();
+  LoadAverageLoader();
+  virtual ~LoadAverageLoader();
 
-  virtual bool init();
+  virtual void accept(Visitor*);
 
-  virtual void fini();
+protected:
+  double loadAverage_[3];
 
-  virtual void update();
-
-private:
-  bool initClockSpeed();
-
-  bool initCpuCount();
-
-  bool initCpuTicks();
-
-  bool readCpuTicks();
-
-private:
-  mach_port_t machHost_;
+public:
+  inline double loadAverage1() { return loadAverage_[0]; }
+  inline double loadAverage5() { return loadAverage_[1]; }
+  inline double loadAverage15() { return loadAverage_[2]; }
 };
 
-#endif // __CPULOADER_OSX__
+#endif // __LOADAVERAGELOADER_H__

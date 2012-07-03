@@ -25,10 +25,14 @@
 #include <math.h>
 #include <string>
 
-#include "cpuloader_osx.h"
-#include "memloader_osx.h"
 #include "base.h"
 #include "constants.h"
+
+#ifdef __MACOSX__
+#include "cpuloader_osx.h"
+#include "memloader_osx.h"
+#include "loadaverageloader_osx.h"
+#endif // __MACOSX__
 
 using namespace std;
 
@@ -39,6 +43,7 @@ class StatusVisitor : public Visitor {
 private:
   string cpuStatus_;
   string memStatus_;
+  string lavgStatus_;
 
   char tmpOutput[256];
 
@@ -46,13 +51,14 @@ public:
   StatusVisitor() {
     cpuStatus_ = "";
     memStatus_ = "";
+    lavgStatus_ = "";
   }
 
   ~StatusVisitor() {
   }
 
   void printStatus() {
-    printf("%s %s\n", memStatus_.c_str(), cpuStatus_.c_str());
+    printf("%s %s %s\n", memStatus_.c_str(), cpuStatus_.c_str(), lavgStatus_.c_str());
   }
 
   virtual void visit(CpuLoader* cpu) {
@@ -68,7 +74,7 @@ public:
     const char *formatPercent         = "%02.0F%%";
     const char *formatPercentSpace    = "%02.0F%% ";
 
-    while (--i) {
+    while (i--) {
       percentUsed = (cpu->statSystem(i) + cpu->statUser(i)) * 100.0;
       nbBar = ceil(percentUsed / PERCENT_PER_BAR);
       nbEmptyBar = NB_BAR_MAX - (int)nbBar;
@@ -95,19 +101,23 @@ public:
     memStatus_ += tmpOutput;
   }
 
+  virtual void visit(LoadAverageLoader* lavg) {
+    sprintf(tmpOutput, "%0.2F %0.2F %0.2F", lavg->loadAverage1(), lavg->loadAverage5(), lavg->loadAverage15());
+    lavgStatus_ = tmpOutput;
+  }
 };
-
 
 
 int main(int argc, char** argv) {
 
-//#ifdef __MACOSX__
+#ifdef __MACOSX__
   CpuLoaderOSX cpu;
   MemLoaderOSX mem;
-//#endif // __MACOSX__
+  LoadAverageLoaderOSX lavg;
+#endif // __MACOSX__
 
   Loader** cmp = NULL;
-  Loader* components[] = {&cpu, &mem, NULL};
+  Loader* components[] = {&cpu, &mem, &lavg, NULL};
 
   StatusVisitor status;
 

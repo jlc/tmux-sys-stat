@@ -1,7 +1,7 @@
 /*
- * cpuloader_osx.h
+ * loadaverageloader_osx.cpp
  *
- * MacOSX Cpu stat gathering.
+ * Base class for load average stats gathering for OSX.
  *
  * Copyright (C) 2012 Jeanluc Chasseriau <jeanluc.chasseriau@crossing-tech.com>
  *
@@ -20,35 +20,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __CPULOADER_OSX__
-#define __CPULOADER_OSX__
+#include "loadaverageloader_osx.h"
 
-#include "cpuloader.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-#include <mach/mach_types.h>
+LoadAverageLoaderOSX::LoadAverageLoaderOSX() {}
 
-class CpuLoaderOSX : public CpuLoader {
-public:
-  CpuLoaderOSX();
-  virtual ~CpuLoaderOSX();
+LoadAverageLoaderOSX::~LoadAverageLoaderOSX() {}
 
-  virtual bool init();
+bool LoadAverageLoaderOSX::init() {
+  loadAverage_[0] = loadAverage_[1] = loadAverage_[2] = 0;
+  return true;
+}
 
-  virtual void fini();
+void LoadAverageLoaderOSX::fini() {
+}
 
-  virtual void update();
+void LoadAverageLoaderOSX::update() {
+  if (!readLoadAverage())
+    printf("Error: unable to read load average.\n");
+}
 
-private:
-  bool initClockSpeed();
+bool LoadAverageLoaderOSX::readLoadAverage() {
+  if (getloadavg(loadAverage_, 3) != 3) {
+    return false;
+  }
+  return true;
+}
 
-  bool initCpuCount();
-
-  bool initCpuTicks();
-
-  bool readCpuTicks();
-
-private:
-  mach_port_t machHost_;
-};
-
-#endif // __CPULOADER_OSX__
