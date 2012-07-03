@@ -23,15 +23,15 @@
 #ifndef __BASE_H__
 #define __BASE_H__
 
-class CpuLoader;
-class MemLoader;
-class LoadAverageLoader;
+class CpuReader;
+class MemReader;
+class LoadAverageReader;
 
 class Visitor {
 public:
-  virtual void visit(CpuLoader*) = 0;
-  virtual void visit(MemLoader*) = 0;
-  virtual void visit(LoadAverageLoader*) = 0;
+  virtual void visit(CpuReader*) = 0;
+  virtual void visit(MemReader*) = 0;
+  virtual void visit(LoadAverageReader*) = 0;
 };
 
 class Visitable {
@@ -39,7 +39,7 @@ public:
   virtual void accept(Visitor*) = 0;
 };
 
-class Loader : public Visitable {
+class Reader : public Visitable {
 public:
   virtual bool init() = 0;
 

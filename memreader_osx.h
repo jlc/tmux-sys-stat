@@ -1,7 +1,7 @@
 /*
- * loadaverageloader.h
+ * memreader_osx.h
  *
- * Base class for load average stats gathering.
+ * Memory stat gatherer.
  *
  * Copyright (C) 2012 Jeanluc Chasseriau <jeanluc.chasseriau@crossing-tech.com>
  *
@@ -20,27 +20,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __LOADAVERAGELOADER_H__
-#define __LOADAVERAGELOADER_H__
+#ifndef __MEMLOADER_OSX_H__
+#define __MEMLOADER_OSX_H__
 
-#include <inttypes.h>
+#include "memreader.h"
 
-#include "base.h"
+#include <mach/mach_types.h>
 
-class LoadAverageLoader : public Loader {
+class MemReaderOSX : public MemReader {
 public:
-  LoadAverageLoader();
-  virtual ~LoadAverageLoader();
+  MemReaderOSX();
+  virtual ~MemReaderOSX();
 
-  virtual void accept(Visitor*);
+  virtual bool init();
 
-protected:
-  double loadAverage_[3];
+  virtual void fini();
 
-public:
-  inline double loadAverage1() { return loadAverage_[0]; }
-  inline double loadAverage5() { return loadAverage_[1]; }
-  inline double loadAverage15() { return loadAverage_[2]; }
+  virtual void update();
+
+private:
+  bool readMemoryStat();
+
+private:
+  mach_port_t machHost_;
 };
 
-#endif // __LOADAVERAGELOADER_H__
+#endif // __MEMLOADER_OSX_H__
+

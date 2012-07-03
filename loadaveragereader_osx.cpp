@@ -1,5 +1,5 @@
 /*
- * loadaverageloader_osx.cpp
+ * loadaveragereader_osx.cpp
  *
  * Base class for load average stats gathering for OSX.
  *
@@ -20,29 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "loadaverageloader_osx.h"
+#include "loadaveragereader_osx.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-LoadAverageLoaderOSX::LoadAverageLoaderOSX() {}
+LoadAverageReaderOSX::LoadAverageReaderOSX() {}
 
-LoadAverageLoaderOSX::~LoadAverageLoaderOSX() {}
+LoadAverageReaderOSX::~LoadAverageReaderOSX() {}
 
-bool LoadAverageLoaderOSX::init() {
+bool LoadAverageReaderOSX::init() {
   loadAverage_[0] = loadAverage_[1] = loadAverage_[2] = 0;
   return true;
 }
 
-void LoadAverageLoaderOSX::fini() {
+void LoadAverageReaderOSX::fini() {
 }
 
-void LoadAverageLoaderOSX::update() {
+void LoadAverageReaderOSX::update() {
   if (!readLoadAverage())
     printf("Error: unable to read load average.\n");
 }
 
-bool LoadAverageLoaderOSX::readLoadAverage() {
+bool LoadAverageReaderOSX::readLoadAverage() {
   if (getloadavg(loadAverage_, 3) != 3) {
     return false;
   }

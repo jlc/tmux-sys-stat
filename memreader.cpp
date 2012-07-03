@@ -1,7 +1,7 @@
 /*
- * loadaverageloader.cpp
+ * memreader.cpp
  *
- * Base class for load average stats gathering.
+ * Memory stat gatherer.
  *
  * Copyright (C) 2012 Jeanluc Chasseriau <jeanluc.chasseriau@crossing-tech.com>
  *
@@ -20,15 +20,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "loadaverageloader.h"
+#include "memreader.h"
 
-LoadAverageLoader::LoadAverageLoader() {
-  loadAverage_[0] = loadAverage_[1] = loadAverage_[2] = 0;
+MemReader::MemReader() :
+  totalMB_(0), activeMB_(0), inactiveMB_(0), wiredMB_(0), freeMB_(0),
+  total_(0), active_(0), inactive_(0), wired_(0), free_(0) {
 }
 
-LoadAverageLoader::~LoadAverageLoader() {}
+MemReader::~MemReader() {
+}
 
-void LoadAverageLoader::accept(Visitor* v) {
+void MemReader::accept(Visitor* v) {
   v->visit(this);
 }
-

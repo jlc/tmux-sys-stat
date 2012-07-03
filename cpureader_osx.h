@@ -1,7 +1,7 @@
 /*
- * memloader_osx.h
+ * cpureader_osx.h
  *
- * Memory stat gatherer.
+ * MacOSX Cpu stat gathering.
  *
  * Copyright (C) 2012 Jeanluc Chasseriau <jeanluc.chasseriau@crossing-tech.com>
  *
@@ -20,17 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __MEMLOADER_OSX_H__
-#define __MEMLOADER_OSX_H__
+#ifndef __CPULOADER_OSX__
+#define __CPULOADER_OSX__
 
-#include "memloader.h"
+#include "cpureader.h"
 
 #include <mach/mach_types.h>
 
-class MemLoaderOSX : public MemLoader {
+class CpuReaderOSX : public CpuReader {
 public:
-  MemLoaderOSX();
-  virtual ~MemLoaderOSX();
+  CpuReaderOSX();
+  virtual ~CpuReaderOSX();
 
   virtual bool init();
 
@@ -39,11 +39,16 @@ public:
   virtual void update();
 
 private:
-  bool readMemoryStat();
+  bool initClockSpeed();
+
+  bool initCpuCount();
+
+  bool initCpuTicks();
+
+  bool readCpuTicks();
 
 private:
   mach_port_t machHost_;
 };
 
-#endif // __MEMLOADER_OSX_H__
-
+#endif // __CPULOADER_OSX__

@@ -1,7 +1,7 @@
 /*
- * loadaverageloader_osx.h
+ * loadaveragereader.cpp
  *
- * Base class for load average stats gathering for OSX.
+ * Base class for load average stats gathering.
  *
  * Copyright (C) 2012 Jeanluc Chasseriau <jeanluc.chasseriau@crossing-tech.com>
  *
@@ -20,25 +20,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __LOADAVERAGELOADER_OSX_H__
-#define __LOADAVERAGELOADER_OSX_H__
+#include "loadaveragereader.h"
 
-#include "loadaverageloader.h"
+LoadAverageReader::LoadAverageReader() {
+  loadAverage_[0] = loadAverage_[1] = loadAverage_[2] = 0;
+}
 
-class LoadAverageLoaderOSX : public LoadAverageLoader {
-public:
-  LoadAverageLoaderOSX();
-  virtual ~LoadAverageLoaderOSX();
+LoadAverageReader::~LoadAverageReader() {}
 
-  virtual bool init();
+void LoadAverageReader::accept(Visitor* v) {
+  v->visit(this);
+}
 
-  virtual void fini();
-
-  virtual void update();
-
-private:
-  bool readLoadAverage();
-
-};
-
-#endif // __LOADAVERAGELOADER_H__

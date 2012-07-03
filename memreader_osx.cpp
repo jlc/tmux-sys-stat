@@ -1,5 +1,5 @@
 /*
- * memloader_osx.cpp
+ * memreader_osx.cpp
  *
  * Memory stat gatherer.
  *
@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "memloader_osx.h"
+#include "memreader_osx.h"
 
 #include <stdio.h>
 
@@ -32,14 +32,14 @@
 
 #include "constants.h"
 
-MemLoaderOSX::MemLoaderOSX() {
+MemReaderOSX::MemReaderOSX() {
 }
 
-MemLoaderOSX::~MemLoaderOSX() {
+MemReaderOSX::~MemReaderOSX() {
   fini();
 }
 
-bool MemLoaderOSX::init() {
+bool MemReaderOSX::init() {
 	// Build the Mach host reference
 	machHost_ = mach_host_self();
 	if (!machHost_) {
@@ -50,15 +50,15 @@ bool MemLoaderOSX::init() {
   return true;
 }
 
-void MemLoaderOSX::fini() {
+void MemReaderOSX::fini() {
 }
 
-void MemLoaderOSX::update() {
+void MemReaderOSX::update() {
   if (!readMemoryStat())
     printf("Error: Unable to read memory statistics.\n");
 }
 
-bool MemLoaderOSX::readMemoryStat() {
+bool MemReaderOSX::readMemoryStat() {
 
 	// Get the data
 	vm_statistics_data_t vmStats;

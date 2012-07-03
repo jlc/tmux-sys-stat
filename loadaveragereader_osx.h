@@ -1,7 +1,7 @@
 /*
- * memloader.cpp
+ * loadaveragereader_osx.h
  *
- * Memory stat gatherer.
+ * Base class for load average stats gathering for OSX.
  *
  * Copyright (C) 2012 Jeanluc Chasseriau <jeanluc.chasseriau@crossing-tech.com>
  *
@@ -20,16 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "memloader.h"
+#ifndef __LOADAVERAGELOADER_OSX_H__
+#define __LOADAVERAGELOADER_OSX_H__
 
-MemLoader::MemLoader() :
-  totalMB_(0), activeMB_(0), inactiveMB_(0), wiredMB_(0), freeMB_(0),
-  total_(0), active_(0), inactive_(0), wired_(0), free_(0) {
-}
+#include "loadaveragereader.h"
 
-MemLoader::~MemLoader() {
-}
+class LoadAverageReaderOSX : public LoadAverageReader {
+public:
+  LoadAverageReaderOSX();
+  virtual ~LoadAverageReaderOSX();
 
-void MemLoader::accept(Visitor* v) {
-  v->visit(this);
-}
+  virtual bool init();
+
+  virtual void fini();
+
+  virtual void update();
+
+private:
+  bool readLoadAverage();
+
+};
+
+#endif // __LOADAVERAGELOADER_H__

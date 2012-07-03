@@ -1,5 +1,5 @@
 /*
- * cpuloader.h
+ * cpureader.h
  *
  * Base class for cpu stats gathering.
  *
@@ -27,7 +27,7 @@
 
 #include "base.h"
 
-class CpuLoader : public Loader {
+class CpuReader : public Reader {
 public:
 
   class CpuStat {
@@ -49,8 +49,8 @@ protected:
 
 public:
 
-  CpuLoader();
-  virtual ~CpuLoader();
+  CpuReader();
+  virtual ~CpuReader();
 
   virtual void accept(Visitor* v);
 

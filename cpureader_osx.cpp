@@ -1,5 +1,5 @@
 /*
- * cpuloader_osx.cpp
+ * cpureader_osx.cpp
  *
  * MacOSX Cpu stat gathering.
  *
@@ -23,7 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "cpuloader_osx.h"
+#include "cpureader_osx.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,14 +40,14 @@
 
 #include "constants.h"
 
-CpuLoaderOSX::CpuLoaderOSX() {
+CpuReaderOSX::CpuReaderOSX() {
 }
 
-CpuLoaderOSX::~CpuLoaderOSX() {
+CpuReaderOSX::~CpuReaderOSX() {
   fini();
 }
 
-bool CpuLoaderOSX::init() {
+bool CpuReaderOSX::init() {
   if (!initCpuCount()) {
     printf("Unable to initialized cpu count.\n");
     return false;
@@ -66,7 +66,7 @@ bool CpuLoaderOSX::init() {
   return true;
 }
 
-void CpuLoaderOSX::fini() {
+void CpuReaderOSX::fini() {
   if (prevCpuLoad_) {
     free(prevCpuLoad_);
     prevCpuLoad_ = NULL;
@@ -78,12 +78,12 @@ void CpuLoaderOSX::fini() {
   }
 }
 
-void CpuLoaderOSX::update() {
+void CpuReaderOSX::update() {
   if (!readCpuTicks())
     printf("Error: unable to read cpu ticks.\n");
 }
 
-bool CpuLoaderOSX::initClockSpeed() {
+bool CpuReaderOSX::initClockSpeed() {
   uint32_t clockRate = 0;
   int mib[2] = { CTL_HW, HW_CPU_FREQ };
   size_t sysctlLength = sizeof(clockRate);
@@ -98,7 +98,7 @@ bool CpuLoaderOSX::initClockSpeed() {
 }
 
 
-bool CpuLoaderOSX::initCpuCount() {
+bool CpuReaderOSX::initCpuCount() {
   size_t sysctlLength = sizeof(cpuCount_);
   int mib[2] = { CTL_HW, HW_NCPU };
   if (sysctl(mib, 2, &cpuCount_, &sysctlLength, NULL, 0)) {
@@ -108,7 +108,7 @@ bool CpuLoaderOSX::initCpuCount() {
   return true;
 }
 
-bool CpuLoaderOSX::initCpuTicks() {
+bool CpuReaderOSX::initCpuTicks() {
   processor_cpu_load_info_t cpuLoad;
   mach_msg_type_number_t processorMsgCount;
   natural_t processorCount;
@@ -136,7 +136,7 @@ bool CpuLoaderOSX::initCpuTicks() {
   return true;
 }
 
-bool CpuLoaderOSX::readCpuTicks() {
+bool CpuReaderOSX::readCpuTicks() {
   processor_cpu_load_info_t cpuLoad;
   mach_msg_type_number_t processorMsgCount;
   natural_t processorCount;
@@ -185,7 +185,7 @@ bool CpuLoaderOSX::readCpuTicks() {
 
     total = system + user + idle;
 
-    //printf("CpuLoader::readCpuTicks: system: %llu / user: %llu / idle: %llu = total: %llu\n", system, user, idle, total);
+    //printf("CpuReader::readCpuTicks: system: %llu / user: %llu / idle: %llu = total: %llu\n", system, user, idle, total);
 
     // Sanity
     if (total < 1) {

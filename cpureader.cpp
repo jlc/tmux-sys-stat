@@ -1,7 +1,7 @@
 /*
- * cpuloader_osx.h
+ * cpureader.cpp
  *
- * MacOSX Cpu stat gathering.
+ * Base class for cpu stats gathering.
  *
  * Copyright (C) 2012 Jeanluc Chasseriau <jeanluc.chasseriau@crossing-tech.com>
  *
@@ -20,35 +20,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __CPULOADER_OSX__
-#define __CPULOADER_OSX__
+#include "cpureader.h"
 
-#include "cpuloader.h"
+#include <stdio.h>
 
-#include <mach/mach_types.h>
+CpuReader::CpuReader() :
+  prevCpuLoad_(NULL), clockSpeed_(0), cpuCount_(0), cpuStat_(NULL) {
+}
 
-class CpuLoaderOSX : public CpuLoader {
-public:
-  CpuLoaderOSX();
-  virtual ~CpuLoaderOSX();
+CpuReader::~CpuReader() {}
 
-  virtual bool init();
-
-  virtual void fini();
-
-  virtual void update();
-
-private:
-  bool initClockSpeed();
-
-  bool initCpuCount();
-
-  bool initCpuTicks();
-
-  bool readCpuTicks();
-
-private:
-  mach_port_t machHost_;
-};
-
-#endif // __CPULOADER_OSX__
+void CpuReader::accept(Visitor* v) {
+  v->visit(this);
+}

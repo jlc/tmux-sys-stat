@@ -1,7 +1,7 @@
 /*
- * memloader.h
+ * loadaveragereader.h
  *
- * Memory stat gatherer.
+ * Base class for load average stats gathering.
  *
  * Copyright (C) 2012 Jeanluc Chasseriau <jeanluc.chasseriau@crossing-tech.com>
  *
@@ -20,44 +20,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __MEMLOADER_H__
-#define __MEMLOADER_H__
+#ifndef __LOADAVERAGELOADER_H__
+#define __LOADAVERAGELOADER_H__
 
 #include <inttypes.h>
 
 #include "base.h"
 
-class MemLoader : public Loader {
+class LoadAverageReader : public Reader {
 public:
-  MemLoader();
-  virtual ~MemLoader();
+  LoadAverageReader();
+  virtual ~LoadAverageReader();
 
   virtual void accept(Visitor*);
 
-  inline double totalMB() { return total_; }
-  inline double activeMB() { return active_; }
-  inline double inactiveMB() { return inactive_; }
-  inline double wiredMB() { return wired_; }
-  inline double freeMB() { return free_; }
-
-  inline uint64_t total() { return total_; }
-  inline uint64_t active() { return active_; }
-  inline uint64_t inactive() { return inactive_; }
-  inline uint64_t wired() { return wired_; }
-  inline uint64_t free() { return free_; }
-
 protected:
-  double totalMB_;
-  double activeMB_;
-  double inactiveMB_;
-  double wiredMB_;
-  double freeMB_;
+  double loadAverage_[3];
 
-  uint64_t total_;
-  uint64_t active_;
-  uint64_t inactive_;
-  uint64_t wired_;
-  uint64_t free_;
+public:
+  inline double loadAverage1() { return loadAverage_[0]; }
+  inline double loadAverage5() { return loadAverage_[1]; }
+  inline double loadAverage15() { return loadAverage_[2]; }
 };
 
-#endif // __MEMLOADER_H__
+#endif // __LOADAVERAGELOADER_H__
