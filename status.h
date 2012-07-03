@@ -1,7 +1,7 @@
 /*
- * main.cpp
+ * status.h
  *
- * Main.
+ * Statistics.
  *
  * Copyright (C) 2012 Jeanluc Chasseriau <jeanluc.chasseriau@crossing-tech.com>
  *
@@ -20,56 +20,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <stdio.h>
-#include <unistd.h>
+#ifndef __STATUS_H__
+#define __STATUS_H__
+
+#include <string>
 
 #include "base.h"
-#include "constants.h"
-#include "status.h"
 
-#ifdef __MACOSX__
-#include "cpureader_osx.h"
-#include "memreader_osx.h"
-#include "loadaveragereader_osx.h"
-#endif // __MACOSX__
+static int NB_BAR_MAX = 5;
+static double PERCENT_PER_BAR = 100.0 / NB_BAR_MAX;
 
-int main(int argc, char** argv) {
+class StatusVisitor : public Visitor {
+private:
+  std::string cpuStatus_;
+  std::string memStatus_;
+  std::string lavgStatus_;
 
-#ifdef __MACOSX__
-  CpuReaderOSX cpu;
-  MemReaderOSX mem;
-  LoadAverageReaderOSX lavg;
-#endif // __MACOSX__
+  char tmpOutput[256];
 
-  Reader** cmp = NULL;
-  Reader* components[] = {&cpu, &mem, &lavg, NULL};
+public:
+  StatusVisitor();
+  ~StatusVisitor();
 
-  StatusVisitor status;
+  void printStatus();
 
-  cmp = components;
-  while(*cmp) { 
-    if(!(*cmp)->init())
-      return -1;
+  virtual void visit(CpuReader* cpu);
 
-    (*cmp)->update();
+  virtual void visit(MemReader* mem);
 
-    cmp++;
-  }
+  virtual void visit(LoadAverageReader* lavg);
+};
 
-  usleep(1*SECONDS);
-
-  cmp = components;
-  while(*cmp) { 
-    (*cmp)->update();
-
-    (*cmp)->accept(&status);
-
-    (*cmp)->fini();
-
-    cmp++;
-  }
-
-  status.printStatus();
-
-  return 0;
-}
+#endif // __STATUS_H__
