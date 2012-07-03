@@ -32,7 +32,7 @@ public:
   MemReaderOSX();
   virtual ~MemReaderOSX();
 
-  virtual bool init();
+  virtual void init();
 
   virtual void fini();
 

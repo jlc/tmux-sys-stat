@@ -33,21 +33,18 @@
 #include "constants.h"
 
 MemReaderOSX::MemReaderOSX() {
+  begin();
 }
 
 MemReaderOSX::~MemReaderOSX() {
-  fini();
+  end();
 }
 
-bool MemReaderOSX::init() {
+void MemReaderOSX::init() {
 	// Build the Mach host reference
 	machHost_ = mach_host_self();
-	if (!machHost_) {
-    printf("Error: Unable to initialize mach host self.\n");
-    return false;
-	}
-
-  return true;
+	if (!machHost_)
+    throw ReaderException("Error: Unable to initialize mach host self.");
 }
 
 void MemReaderOSX::fini() {
@@ -55,7 +52,7 @@ void MemReaderOSX::fini() {
 
 void MemReaderOSX::update() {
   if (!readMemoryStat())
-    printf("Error: Unable to read memory statistics.\n");
+    throw ReaderException("Error: Unable to read memory statistics.");
 }
 
 bool MemReaderOSX::readMemoryStat() {
@@ -94,3 +91,4 @@ bool MemReaderOSX::readMemoryStat() {
 
   return true;
 }
+

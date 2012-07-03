@@ -23,6 +23,10 @@
 #ifndef __BASE_H__
 #define __BASE_H__
 
+#include <string>
+#include <exception>
+
+class Visitable;
 class CpuReader;
 class MemReader;
 class LoadAverageReader;
@@ -32,6 +36,7 @@ public:
   virtual void visit(CpuReader*) = 0;
   virtual void visit(MemReader*) = 0;
   virtual void visit(LoadAverageReader*) = 0;
+  virtual void visit(Visitable*) {} // default
 };
 
 class Visitable {
@@ -39,13 +44,32 @@ public:
   virtual void accept(Visitor*) = 0;
 };
 
-class Reader : public Visitable {
+class Updatable : public Visitable {
 public:
-  virtual bool init() = 0;
+  virtual void update() = 0;
+};
+
+class Reader : public Updatable {
+public:
+  Reader() {}
+  virtual ~Reader() {}
+
+  virtual void init() = 0;
 
   virtual void fini() = 0;
 
-  virtual void update() = 0;
+protected:
+  void begin() { this->init(); this->update(); }
+  void end() { this->fini(); }
+};
+
+class ReaderException : public std::exception {
+public:
+  ReaderException(std::string reason) : reason_(reason) {}
+  virtual ~ReaderException() throw() {}
+  const char* what() const throw() { return reason_.c_str(); }
+private:
+  std::string reason_;
 };
 
 #endif // __BASE_H__

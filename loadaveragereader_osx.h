@@ -30,7 +30,7 @@ public:
   LoadAverageReaderOSX();
   virtual ~LoadAverageReaderOSX();
 
-  virtual bool init();
+  virtual void init();
 
   virtual void fini();
 

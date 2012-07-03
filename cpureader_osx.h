@@ -32,7 +32,7 @@ public:
   CpuReaderOSX();
   virtual ~CpuReaderOSX();
 
-  virtual bool init();
+  virtual void init();
 
   virtual void fini();
 

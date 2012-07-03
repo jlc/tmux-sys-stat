@@ -48,7 +48,6 @@ protected:
   CpuStat* cpuStat_;
 
 public:
-
   CpuReader();
   virtual ~CpuReader();
 

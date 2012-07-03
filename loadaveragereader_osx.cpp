@@ -25,13 +25,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-LoadAverageReaderOSX::LoadAverageReaderOSX() {}
+LoadAverageReaderOSX::LoadAverageReaderOSX() {
+  begin();
+}
 
-LoadAverageReaderOSX::~LoadAverageReaderOSX() {}
+LoadAverageReaderOSX::~LoadAverageReaderOSX() {
+  end();
+}
 
-bool LoadAverageReaderOSX::init() {
+void LoadAverageReaderOSX::init() {
   loadAverage_[0] = loadAverage_[1] = loadAverage_[2] = 0;
-  return true;
 }
 
 void LoadAverageReaderOSX::fini() {
@@ -39,7 +42,7 @@ void LoadAverageReaderOSX::fini() {
 
 void LoadAverageReaderOSX::update() {
   if (!readLoadAverage())
-    printf("Error: unable to read load average.\n");
+    throw ReaderException("Error: unable to read load average.\n");
 }
 
 bool LoadAverageReaderOSX::readLoadAverage() {

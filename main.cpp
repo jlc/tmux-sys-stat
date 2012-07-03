@@ -33,43 +33,46 @@
 #include "loadaveragereader_osx.h"
 #endif // __MACOSX__
 
+class Sleeper : public Updatable {
+public:
+  virtual void update() {
+    usleep(1*SECONDS);
+  }
+  virtual void accept(Visitor*) {}
+};
+
 int main(int argc, char** argv) {
 
+  try {
 #ifdef __MACOSX__
-  CpuReaderOSX cpu;
-  MemReaderOSX mem;
-  LoadAverageReaderOSX lavg;
+    CpuReaderOSX cpu;
+    MemReaderOSX mem;
+    LoadAverageReaderOSX lavg;
 #endif // __MACOSX__
 
-  Reader** cmp = NULL;
-  Reader* components[] = {&cpu, &mem, &lavg, NULL};
+    Sleeper sleeper;
+    StatusVisitor status;
 
-  StatusVisitor status;
+    Updatable** cmp = NULL;
+    Updatable* components[] = { &sleeper,
+                                &cpu, &mem, &lavg,
+                                NULL };
 
-  cmp = components;
-  while(*cmp) { 
-    if(!(*cmp)->init())
-      return -1;
+    cmp = components;
+    while(*cmp) {
+      (*cmp)->update();
 
-    (*cmp)->update();
+      (*cmp)->accept(&status);
 
-    cmp++;
+      cmp++;
+    }
+
+    status.printStatus();
   }
-
-  usleep(1*SECONDS);
-
-  cmp = components;
-  while(*cmp) { 
-    (*cmp)->update();
-
-    (*cmp)->accept(&status);
-
-    (*cmp)->fini();
-
-    cmp++;
+  catch(ReaderException& exception) {
+    printf("Exception: %s\n", exception.what());
+    return -1;
   }
-
-  status.printStatus();
 
   return 0;
 }

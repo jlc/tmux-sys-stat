@@ -41,29 +41,22 @@
 #include "constants.h"
 
 CpuReaderOSX::CpuReaderOSX() {
+  begin();
 }
 
 CpuReaderOSX::~CpuReaderOSX() {
-  fini();
+  end();
 }
 
-bool CpuReaderOSX::init() {
-  if (!initCpuCount()) {
-    printf("Unable to initialized cpu count.\n");
-    return false;
-  }
+void CpuReaderOSX::init() {
+  if (!initCpuCount())
+    throw ReaderException("Unable to initialize cpu count.");
 
-  if (!initClockSpeed()) {
-    printf("Unable to initialized clock speed.\n");
-    return false;
-  }
+  if (!initClockSpeed())
+    throw ReaderException("Unable to initialize clock speed.");
 
-  if (!initCpuTicks()) {
-    printf("Unable to initialized cpu ticks count.\n");
-    return false;
-  }
-
-  return true;
+  if (!initCpuTicks())
+    throw ReaderException("Unable to initialized cpu ticks count.");
 }
 
 void CpuReaderOSX::fini() {
@@ -80,7 +73,7 @@ void CpuReaderOSX::fini() {
 
 void CpuReaderOSX::update() {
   if (!readCpuTicks())
-    printf("Error: unable to read cpu ticks.\n");
+    throw ReaderException("Error: unable to read cpu ticks.");
 }
 
 bool CpuReaderOSX::initClockSpeed() {
